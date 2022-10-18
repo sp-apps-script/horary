@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>horary</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+  <style>
+    body {
+      font-family: 'Roboto';
+      position: relative;
+    }
+
+    p {
+      color: #888;
+      font-size: 14px;
+    }
+
+    b {}
+
+    th {
+      font-size: 11px;
+      color: #fff;
+    }
+
+    td {
+      font-size: 11px;
+      color: #888;
+    }
+
+    td:nth-child(1) {
+      background-color: rgba(248, 248, 248, 1);
+    }
+
+    tbody tr:hover>td {
+      background-color: rgba(248, 248, 248, .8);
+    }
+
+    .horary__loading {
+      display: none;
+      left: 0;
+      right: 0;
+      z-index: 1;
+    }
+
+    .horary__loading--active {
+      display: flex;
+
+    }
+
+    #warning,
+    .warning-bar {
+      display: none !important;
+      background-color: red;
+    }
+
+    .warning-bar {
+      visibility: hidden;
+    }
+
+    .spinner-border {}
+  </style>
+
+</head>
+
+<body>
+  <!-- Loading-->
+  <div
+    class="horary__loading w-100 vh-100 position-absolute justify-content-center align-items-center bg-white opacity-75">
+    <div class="spinner-border" role="status">
+      <span class="sr-only"></span>
+    </div>
+  </div>
+
+  <div class="d-flex flex-column align-items-center container">
+
+    <!-- Header -->
+    <header class="px-4 my-4 text-center">
+      <img src="https://vonex.edu.pe/wp-content/uploads/2018/11/logo-vonex-web.png" class="jet-logo__img"
+        alt="Academia Vonex" width="158" height="54"
+        srcset="https://vonex.edu.pe/wp-content/uploads/2018/11/logo-vonex-web.png 2x">
+
+      <h1 class="display-5 fw-bold mt-2 text-success">HORARIO DE CLASES</h1>
+    </header>
+
+    <!-- Email -->
+    <div class="col-12 col-lg-8">
+      <p><b class="mr-3">Email:</b> <span id="email"><?= email ?></span></p>
+    </div>
+
+    <!-- Table Horary -->
+    <div class="col-12 col-lg-8 border rounded-2 position-relative overflow-hidden">
+      <div class="table-responsive">
+        <table class="table text-center table-bordered mb-0">
+          <tr class="text-white bg-success">
+            <th>HORA INICIO</th>
+            <th>LUNES</th>
+            <th>MARTES</th>
+            <th>MIERCOLES</th>
+            <th>JUEVES</th>
+            <th>VIERNES</th>
+          </tr>
+          <tbody id="data">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loading = document.querySelector(".horary__loading");
+    const tbody = document.querySelector('#data');
+    const json = < ? != JSON.stringify(dataHorary) ? > ;
+    const days = < ? != JSON.stringify(days) ? > ;
+    const hours = < ? != JSON.stringify(hours) ? > ;
+    let data = [];
+    let symbol = "-";
+
+    let timesArray = [
+      [symbol, symbol, symbol, symbol, symbol],
+      [symbol, symbol, symbol, symbol, symbol],
+      [symbol, symbol, symbol, symbol, symbol],
+      [symbol, symbol, symbol, symbol, symbol],
+      [symbol, symbol, symbol, symbol, symbol],
+      [symbol, symbol, symbol, symbol, symbol],
+      [symbol, symbol, symbol, symbol, symbol],
+    ];
+
+    if (json.length >= 1) {
+      // Group days
+      for (let i in days) {
+        for (let day in json) {
+          let item = json[day];
+          if (item[0] == days[i]) {
+            data.push(item);
+          }
+        }
+
+        // Filter time
+        for (let key in data) {
+          if (data[key][1] == hours[0]) {
+            timesArray[0][i] = data[key][4];
+          }
+          if (data[key][1] == hours[1]) {
+            timesArray[1][i] = data[key][4];
+          }
+          if (data[key][1] == hours[2]) {
+            timesArray[2][i] = data[key][4];
+          }
+          if (data[key][1] == hours[3]) {
+            timesArray[3][i] = data[key][4];
+          }
+          if (data[key][1] == hours[4]) {
+            timesArray[4][i] = data[key][4];
+          }
+          if (data[key][1] == hours[5]) {
+            timesArray[5][i] = data[key][4];
+          }
+          if (data[key][1] == hours[6]) {
+            timesArray[6][i] = data[key][4];
+          }
+        }
+        // Clean day
+        data = [];
+      }
+
+      // Add Column static time
+      for (let j in timesArray) {
+        timesArray[j].unshift(hours[j]);
+      }
+
+      // Build Table
+      timesArray.forEach(function (rowData) {
+        let row = document.createElement('tr');
+        rowData.forEach(function (cellData) {
+          let cell = document.createElement('td');
+          cell.appendChild(document.createTextNode(cellData));
+          row.appendChild(cell);
+        });
+        tbody.appendChild(row);
+      });
+    }
+  </script>
+
+</body>
+
+</html>
